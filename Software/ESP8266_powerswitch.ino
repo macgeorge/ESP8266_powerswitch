@@ -3,15 +3,15 @@
 const char* ssid = "Your SSID";
 const char* password = "Your Password";
 
-int val=1;
-int flag=0;
+int val=1;  //the value of the output GPIO2
+int flag=0; //checks if there is a transition of GPIO0, to engage manual override
 
 // Create an instance of the server
 // specify the port to listen on as an argument
 WiFiServer server(80);
 
 void setup() {
-  WiFiBegin();
+  WiFiConnect(); //connect to the WiFi network
   
   // Start the server
   server.begin();
@@ -24,16 +24,16 @@ void loop() {
     setup();
   }
 
-  if (digitalRead(0) == LOW && flag==0) {
+  if (digitalRead(0) == LOW && flag==0) { //enable manual override
     val=0;
     flag=1;
     digitalWrite(2, val);
     Serial.println("Manual");
     delay(1);
     return;
-  }
+  } 
 
-  if (digitalRead(0) == HIGH && flag==1) {
+  else if (digitalRead(0) == HIGH && flag==1) { //disable manual override
     flag=0;
     val=1;
     Serial.println("Auto");
@@ -91,8 +91,8 @@ void loop() {
 }
 
 
-void WiFiBegin(){
-    pinMode(2, OUTPUT);
+void WiFiConnect(){
+  pinMode(2, OUTPUT);
   digitalWrite(2, val);
   pinMode(0, INPUT);
   Serial.begin(115200);
